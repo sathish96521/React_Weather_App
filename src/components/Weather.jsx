@@ -6,7 +6,7 @@ import '../App.css';
 const Weather = ({ onData }) => {
     const [city, setCity] = useState('');
     const [weatherData, setWeatherData] = useState(null);
-    // console.log('weatherData', weatherData);
+    const [formattedDate, setformattedDate] = useState();
 
     const fetchData = async () => {
         if (!city) return;
@@ -16,7 +16,14 @@ const Weather = ({ onData }) => {
                 `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=f00c38e0279b7bc85480c3fe775d518c`
             );
             setWeatherData(response.data);
-            // console.log(response.data);
+            const timezoneOffsetInSeconds = response.data.timezone;
+            const timezoneOffsetInMilliseconds = timezoneOffsetInSeconds * 1000;
+            const currentDate = new Date(); const utcDate = new Date(currentDate.getTime() + currentDate.getTimezoneOffset() * 60000);
+            const localDate = new Date(utcDate.getTime() + timezoneOffsetInMilliseconds);
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            const formattedDate = localDate.toLocaleDateString('en-US', options);
+            setformattedDate(formattedDate);
+            // console.log('resp', response.data);
         } catch (error) {
             console.error(error);
         }
@@ -30,16 +37,7 @@ const Weather = ({ onData }) => {
 
     const handleInputChange = (e) => {
         setCity(e.target.value);
-        onData(e.target.value);
     };
-
-    const timezoneOffsetInSeconds = weatherData.timezone;
-    const timezoneOffsetInMilliseconds = timezoneOffsetInSeconds * 1000;
-    const currentDate = new Date();
-    const localDate = new Date(currentDate.getTime() + timezoneOffsetInMilliseconds);
-    const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    const formattedDate = localDate.toLocaleDateString('en-US', options);
-    // console.log(formattedDate);
 
     return (
         <div className="mt-2 p-4">
@@ -48,7 +46,7 @@ const Weather = ({ onData }) => {
             </form>
             {weatherData ? (
                 <div className="mt-2 grid-container rounded-md border-solid">
-                    <h2 className="bg-teal-300 font-bold rounded-md grid-item text-amber-600">{weatherData.name},{weatherData.sys.country},<br/>{formattedDate}</h2>
+                    <h2 className="bg-teal-300 font-bold rounded-md grid-item text-amber-600">{weatherData.name},{weatherData.sys.country},<br />{formattedDate}</h2>
                     <p className="rounded-md grid-item text-gray-900"><strong>Temperature </strong><br /> {weatherData.main.temp}°C</p>
                     <p className="rounded-md grid-item text-gray-900"><strong>Description </strong><br /> {weatherData.weather[0].description}</p>
                     <p className="rounded-md grid-item text-gray-900"><strong>Feels like</strong><br />  {weatherData.main.feels_like}°C</p>
