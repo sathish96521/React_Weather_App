@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useState, useEffect } from "react";
-import '../App.css';
+// import '../App.css';
 // import '../src/App.css';
 
 const Weather = ({ onData }) => {
@@ -55,7 +55,7 @@ const Weather = ({ onData }) => {
                     <p className="rounded-md grid-item text-gray-900"><strong>Wind Speed</strong><br />  {weatherData.wind.speed} m/s</p>
                 </div >
             ) : (
-                <p>Loading weather data...</p>
+                <pre>Loading weather data...</pre>
             )}
         </div>
     );
